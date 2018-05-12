@@ -49,7 +49,7 @@ namespace LessHeadInjuries
             {
                 //we do some quick calculation of damage to see if it's an armor hit or an structure hit
                 float currentArmor = __instance.GetCurrentArmor(aLoc);
-                float remainingDamage = currentArmor - totalDamage;
+                float remainingDamage = totalDamage - currentArmor;
 
                 if (remainingDamage <= 0 && totalDamage < LessHeadInjuries.ArmorHeadHitIgnoreDamageBelow)
                 {
