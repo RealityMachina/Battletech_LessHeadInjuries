@@ -8,10 +8,10 @@ This may be a bit academic if it's something like an assault mech that manages t
 
 # Installation Instructions
 
-1. Install the Battletech Mod Loader if you don't have it yet. Can be found here: https://github.com/Mpstark/BattleTechModLoader/releases/tag/v0.1-alpha
+1. Install Modtek if you don't have it yet (be sure to install its prereq BTML as well!). Can be found here: https://github.com/janxious/ModTek
 
 2. Download latest release.
 
-3. Put .dll in `BATTLETECH\Mods`. Make the `Mods` folder if it doesn't exist yet.
+3. Put folder in the `BATTLETECH\Mods` folder. Make the `Mods` folder if it doesn't exist yet.
 
 4. Injuries should now be less common from LRM spam.
