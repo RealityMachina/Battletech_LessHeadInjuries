@@ -54,18 +54,29 @@ namespace LessHeadInjuries
         {
             if (aLoc == ArmorLocation.Head)
             {
-                
+                Boolean DirectHit = false;
+
                 //we do some quick calculation of damage to see if it's an armor hit or an structure hit
                 float currentArmor = Math.Max(__instance.GetCurrentArmor(aLoc), 0f); //either it has armor remaining or it's got nothing left
                 
-                float remainingDamage = totalArmorDamage - currentArmor; // subtract our armour damage by totalArmorDamage: if it's more than 0, we use directstructuredamage
+                float remainingDamage = totalArmorDamage - currentArmor; // subtract our armour damage by totalArmorDamage: if it's more than 0, we calculate for structure damage
 
-                if (remainingDamage <= 0f && totalArmorDamage < LessHeadInjuries.Settings.ArmorHitDamageMinimum)
+                float structureDamage = directStructureDamage;
+                if (remainingDamage > 0f)
+                {
+                    structureDamage += remainingDamage;
+                }
+                if (structureDamage >= 0f) // need to account for direct structure damage
+                {
+                    DirectHit = true;
+
+                }
+                if (!DirectHit && totalArmorDamage < LessHeadInjuries.Settings.ArmorHitDamageMinimum)
                 {
                     //remainign damage less or equal to zero mean no structure penetration. Treat as an armour hit.
                     LessHeadInjuries.IgnoreNextHeadHit.Add(__instance.pilot);
                 }
-                else if (remainingDamage > 0f && directStructureDamage < LessHeadInjuries.Settings.StructureHitDamageMinimum)
+                else if (DirectHit && structureDamage < LessHeadInjuries.Settings.StructureHitDamageMinimum)
                 {
                     LessHeadInjuries.IgnoreNextHeadHit.Add(__instance.pilot);
                 }
