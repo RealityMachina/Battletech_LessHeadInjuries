@@ -19,6 +19,7 @@ namespace LessHeadInjuries
         {
             var harmony = HarmonyInstance.Create("Battletech.realitymachina.LessHeadInjuries");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
             try
             {
                 Settings = JsonConvert.DeserializeObject<ModSettings>(modSettings);
@@ -48,22 +49,23 @@ namespace LessHeadInjuries
     [HarmonyPatch(typeof(BattleTech.Mech), "DamageLocation")]
     public static class BattleTech_Mech_DamageLocation_Patch
     {
-        static void Prefix(Mech __instance, int originalHitLoc, WeaponHitInfo hitInfo, ArmorLocation aLoc, Weapon weapon, float totalDamage, int hitIndex,
-                AttackImpactQuality impactQuality, DamageType damageType)
+        static void Prefix(Mech __instance, int originalHitLoc, WeaponHitInfo hitInfo, ArmorLocation aLoc, Weapon weapon,
+            float totalArmorDamage, float directStructureDamage, int hitIndex, AttackImpactQuality impactQuality, DamageType damageType)
         {
             if (aLoc == ArmorLocation.Head)
             {
+                
                 //we do some quick calculation of damage to see if it's an armor hit or an structure hit
                 float currentArmor = Math.Max(__instance.GetCurrentArmor(aLoc), 0f); //either it has armor remaining or it's got nothing left
                 
-                float remainingDamage = totalDamage - currentArmor;
+                float remainingDamage = totalArmorDamage - currentArmor; // subtract our armour damage by totalArmorDamage: if it's more than 0, we use directstructuredamage
 
-                if (remainingDamage <= 0f && totalDamage < LessHeadInjuries.Settings.ArmorHitDamageMinimum)
+                if (remainingDamage <= 0f && totalArmorDamage < LessHeadInjuries.Settings.ArmorHitDamageMinimum)
                 {
                     //remainign damage less or equal to zero mean no structure penetration. Treat as an armour hit.
                     LessHeadInjuries.IgnoreNextHeadHit.Add(__instance.pilot);
                 }
-                else if (remainingDamage > 0f && totalDamage < LessHeadInjuries.Settings.StructureHitDamageMinimum)
+                else if (remainingDamage > 0f && directStructureDamage < LessHeadInjuries.Settings.StructureHitDamageMinimum)
                 {
                     LessHeadInjuries.IgnoreNextHeadHit.Add(__instance.pilot);
                 }
